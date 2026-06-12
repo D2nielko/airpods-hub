@@ -38,6 +38,7 @@ const els = {
   scan: document.getElementById('btn-scan'),
   gatt: document.getElementById('btn-gatt'),
   demo: document.getElementById('btn-demo'),
+  bridge: document.getElementById('btn-bridge'),
   tiles: {
     left: document.getElementById('tile-left'),
     right: document.getElementById('tile-right'),
@@ -47,6 +48,9 @@ const els = {
 
 let demoTimer = null;
 let activeScan = null;
+let bridgeTimer = null;
+
+const BRIDGE_URL = 'http://127.0.0.1:8766/battery';
 
 function log(msg) {
   const time = new Date().toLocaleTimeString();
@@ -241,7 +245,49 @@ async function connectGatt() {
   }
 }
 
-/* -------------------- 3. Demo mode -------------------- */
+/* -------------------- 3. macOS bridge -------------------- */
+
+async function pollBridge() {
+  const res = await fetch(BRIDGE_URL, { signal: AbortSignal.timeout(3000) });
+  if (!res.ok) throw new Error(`bridge returned ${res.status}`);
+  const { devices } = await res.json();
+  // Prefer a device with per-pod levels (AirPods); fall back to any battery.
+  const pods = devices.find((d) => d.left !== null || d.right !== null);
+  const dev = pods || devices.find((d) => d.single !== null);
+  if (!dev) {
+    setStatus('Bridge: no battery devices', false);
+    return;
+  }
+  applyReading({
+    model: dev.name + (dev.connected ? '' : ' (last known)'),
+    left: dev.left ?? dev.single,
+    right: dev.right ?? dev.single,
+    casePct: dev.case,
+    leftCharging: false, rightCharging: false, caseCharging: false,
+  }, 'macOS Bluetooth daemon');
+}
+
+async function startBridge(manual) {
+  stopDemo();
+  if (bridgeTimer) clearInterval(bridgeTimer);
+  try {
+    await pollBridge();
+    log('Connected to macOS bridge — polling every 10 s.');
+    bridgeTimer = setInterval(() => pollBridge().catch((e) => log(`Bridge poll failed: ${e.message}`)), 10000);
+  } catch (err) {
+    if (manual) {
+      log(`Bridge not reachable at ${BRIDGE_URL}.`);
+      showNotice(
+        'The macOS bridge isn’t running. Start it in a terminal with ' +
+        '<code>python3 bridge/macos_bridge.py</code> (from the airpods-webapp folder), then click ' +
+        '“macOS bridge” again.'
+      );
+    }
+    throw err;
+  }
+}
+
+/* -------------------- 4. Demo mode -------------------- */
 
 function stopDemo() {
   if (demoTimer) {
@@ -278,6 +324,10 @@ function showNotice(html) {
 els.scan.addEventListener('click', startScan);
 els.gatt.addEventListener('click', connectGatt);
 els.demo.addEventListener('click', startDemo);
+els.bridge.addEventListener('click', () => startBridge(true).catch(() => {}));
+
+// Auto-detect the macOS bridge on load — silently ignore if it's not running.
+startBridge(false).catch(() => {});
 
 if (!navigator.bluetooth) {
   showNotice(

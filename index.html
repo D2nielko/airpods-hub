@@ -24,6 +24,7 @@
     <div class="card">
       <div class="btn-row">
         <button id="btn-scan">Scan for AirPods (BLE)</button>
+        <button id="btn-bridge" class="secondary">macOS bridge</button>
         <button id="btn-gatt" class="secondary">Connect via GATT</button>
         <button id="btn-demo" class="secondary">Demo mode</button>
         <span id="status" class="status-pill"><span class="dot"></span><span id="status-text">Not connected</span></span>
@@ -71,6 +72,10 @@
           which carries left/right/case battery and charging flags in plain bytes. This needs Chrome’s
           <code>chrome://flags/#enable-experimental-web-platform-features</code> flag for
           <code>requestLEScan</code>.</li>
+        <li><strong>macOS bridge</strong> — on a Mac, Chrome’s experimental scanning API often delivers
+          nothing, but macOS itself tracks AirPods battery. Run
+          <code>python3 bridge/macos_bridge.py</code> and this page auto-detects it and polls the OS data
+          (this is the most reliable path on macOS).</li>
         <li><strong>GATT Battery Service</strong> — the standard Bluetooth battery service. AirPods don’t
           expose it to non-Apple hosts, but many other earbuds do, so it’s here for completeness.</li>
         <li><strong>Demo mode</strong> — simulated data so you can explore the UI anywhere.</li>

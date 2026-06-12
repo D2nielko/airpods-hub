@@ -36,15 +36,24 @@ the browser. Everything else works without flags, and **Demo mode** works in eve
 
 Apple has no public AirPods API, so the app uses what actually exists:
 
-1. **Apple proximity pairing broadcasts** (primary path) — AirPods continuously advertise a BLE
+1. **macOS bridge** (most reliable on a Mac) — Chrome's experimental BLE-scanning API often
+   delivers no advertisements on macOS, but macOS itself tracks AirPods battery. Run
+
+   ```sh
+   python3 bridge/macos_bridge.py
+   ```
+
+   and the battery page auto-detects it (`http://127.0.0.1:8766/battery`) and polls the OS data
+   every 10 seconds — real left/right/case levels, no flags needed.
+2. **Apple proximity pairing broadcasts** (primary path on Android/Windows/Linux) — AirPods continuously advertise a BLE
    manufacturer-data message (company ID `0x004C`, type `0x07`) containing model ID, left/right
    battery (4-bit, 0–10 scale, 15 = unavailable), charging flags, and case battery. The app scans
    for these and decodes them, including the left/right "flip" bit that swaps nibbles depending on
    which pod is primary. The **case battery appears automatically** whenever the case is
    broadcasting (lid open or recently active).
-2. **Standard GATT Battery Service** — AirPods don't expose it to non-Apple hosts, but many other
+3. **Standard GATT Battery Service** — AirPods don't expose it to non-Apple hosts, but many other
    earbuds do, so it's offered as a secondary path.
-3. **Demo mode** — simulated data for trying the UI anywhere.
+4. **Demo mode** — simulated data for trying the UI anywhere.
 
 Format references: [furiousMAC continuity](https://github.com/furiousMAC/continuity/blob/master/messages/proximity_pairing.md),
 [LibrePods](https://github.com/kavishdevar/librepods).

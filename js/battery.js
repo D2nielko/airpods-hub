@@ -139,7 +139,27 @@ function parseProximityPairing(dataView) {
   };
 }
 
+/**
+ * Pick artwork family from a model/device name and swap the tile icons.
+ */
+let currentFamily = null;
+
+function familyFor(name) {
+  if (/max/i.test(name)) return 'max';
+  if (/pro/i.test(name)) return 'pro';
+  return 'classic';
+}
+
+function setIcons(family) {
+  if (family === currentFamily) return;
+  currentFamily = family;
+  for (const part of ['left', 'right', 'case']) {
+    els.tiles[part].querySelector('.icon').innerHTML = AirPodsArt.render(family, part);
+  }
+}
+
 function applyReading(r, source) {
+  setIcons(familyFor(r.model));
   setTile('left', r.left, r.leftCharging);
   setTile('right', r.right, r.rightCharging);
   setTile('case', r.casePct, r.caseCharging);
@@ -150,8 +170,16 @@ function applyReading(r, source) {
 
 /* -------------------- 1. BLE advertisement scan -------------------- */
 
+function stopBridge() {
+  if (bridgeTimer) {
+    clearInterval(bridgeTimer);
+    bridgeTimer = null;
+  }
+}
+
 async function startScan() {
   stopDemo();
+  stopBridge();
   if (!navigator.bluetooth || !navigator.bluetooth.requestLEScan) {
     log('requestLEScan unavailable. Enable chrome://flags/#enable-experimental-web-platform-features and reload.');
     showNotice(
@@ -187,6 +215,7 @@ async function startScan() {
 
 async function connectGatt() {
   stopDemo();
+  stopBridge();
   if (!navigator.bluetooth) {
     showNotice(
       'Web Bluetooth isn’t available in this browser. Use Chrome or Edge on Android, macOS, Windows, ' +
@@ -207,6 +236,7 @@ async function connectGatt() {
     const service = await server.getPrimaryService('battery_service');
     const characteristic = await service.getCharacteristic('battery_level');
 
+    setIcons(familyFor(device.name || ''));
     const update = async () => {
       const value = await characteristic.readValue();
       const pct = value.getUint8(0);
@@ -269,7 +299,7 @@ async function pollBridge() {
 
 async function startBridge(manual) {
   stopDemo();
-  if (bridgeTimer) clearInterval(bridgeTimer);
+  stopBridge();
   try {
     await pollBridge();
     log('Connected to macOS bridge — polling every 10 s.');
@@ -298,6 +328,7 @@ function stopDemo() {
 
 function startDemo() {
   stopDemo();
+  stopBridge();
   let left = 80, right = 75, casePct = 60;
   const tick = () => {
     left = Math.max(5, left - Math.random() * 1.5);
@@ -325,6 +356,9 @@ els.scan.addEventListener('click', startScan);
 els.gatt.addEventListener('click', connectGatt);
 els.demo.addEventListener('click', startDemo);
 els.bridge.addEventListener('click', () => startBridge(true).catch(() => {}));
+
+// Neutral placeholder art until a device tells us what it is.
+setIcons('classic');
 
 // Auto-detect the macOS bridge on load — silently ignore if it's not running.
 startBridge(false).catch(() => {});

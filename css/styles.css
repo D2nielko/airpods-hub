@@ -179,7 +179,18 @@ button.secondary {
 
 .battery-tile.available { opacity: 1; }
 
-.battery-tile .icon { font-size: 2.4rem; line-height: 1; }
+.battery-tile .icon {
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.battery-tile .icon svg {
+  height: 100%;
+  width: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
 .battery-tile .label {
   font-weight: 600;
   margin: 10px 0 12px;

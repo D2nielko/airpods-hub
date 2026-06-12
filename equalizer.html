@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AirPods Hub — Equalizer</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎧</text></svg>" />
+</head>
+<body>
+  <nav>
+    <span class="brand">🎧 AirPods Hub</span>
+    <a href="index.html">Battery</a>
+    <a href="equalizer.html" class="active">Equalizer</a>
+    <a href="info.html">Misc Info</a>
+  </nav>
+
+  <main>
+    <h1>Equalizer</h1>
+    <p class="subtitle">10-band EQ applied in real time to audio played through this page — heard exactly as shaped on your AirPods.</p>
+
+    <div class="notice">
+      <strong>Heads up:</strong> AirPods have no public device-level EQ — Apple’s built-in “Adaptive EQ”
+      runs on the H2 chip and isn’t controllable by apps. This equalizer uses the Web Audio API to shape
+      any audio you play here, which your AirPods then reproduce. Your settings are saved locally and
+      restored next visit.
+    </div>
+
+    <div class="card">
+      <h2>Audio source</h2>
+      <div class="drop-zone" id="drop-zone">
+        🎵 Drop an audio file here or click to choose<br />
+        <small>…or use the built-in test track</small>
+      </div>
+      <input type="file" id="file-input" accept="audio/*" />
+      <div class="btn-row" style="margin-top: 14px;">
+        <button id="btn-play" disabled>▶︎ Play</button>
+        <button id="btn-test" class="secondary">Use test tone sweep</button>
+        <span id="track-name" class="meta-line" style="margin: 0;"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Bands</h2>
+      <div class="preset-row" id="presets"></div>
+      <div class="eq-bands" id="eq-bands"></div>
+      <div class="slider-row">
+        <label for="preamp">Preamp</label>
+        <input type="range" id="preamp" min="-12" max="12" step="0.5" value="0" />
+        <span class="val" id="preamp-val">0 dB</span>
+      </div>
+      <div class="btn-row">
+        <button id="btn-reset" class="secondary">Reset to flat</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Frequency response & spectrum</h2>
+      <canvas class="eq-canvas" id="eq-canvas" width="800" height="140"></canvas>
+    </div>
+  </main>
+
+  <script src="js/equalizer.js"></script>
+</body>
+</html>

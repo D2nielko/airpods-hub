@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AirPods Hub — Battery</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎧</text></svg>" />
+</head>
+<body>
+  <nav>
+    <span class="brand">🎧 AirPods Hub</span>
+    <a href="index.html" class="active">Battery</a>
+    <a href="equalizer.html">Equalizer</a>
+    <a href="info.html">Misc Info</a>
+  </nav>
+
+  <main>
+    <h1>Battery</h1>
+    <p class="subtitle">Live battery levels for your AirPods — and the charging case when it’s connected.</p>
+
+    <div id="compat-notice" class="notice" hidden></div>
+
+    <div class="card">
+      <div class="btn-row">
+        <button id="btn-scan">Scan for AirPods (BLE)</button>
+        <button id="btn-gatt" class="secondary">Connect via GATT</button>
+        <button id="btn-demo" class="secondary">Demo mode</button>
+        <span id="status" class="status-pill"><span class="dot"></span><span id="status-text">Not connected</span></span>
+      </div>
+      <p class="meta-line" id="device-meta"></p>
+    </div>
+
+    <div class="battery-grid">
+      <div class="battery-tile" id="tile-left">
+        <span class="charging-badge">⚡️</span>
+        <div class="icon">🎧</div>
+        <div class="label">Left AirPod</div>
+        <div class="pct">—</div>
+        <div class="battery-bar"><div class="fill"></div></div>
+      </div>
+      <div class="battery-tile" id="tile-right">
+        <span class="charging-badge">⚡️</span>
+        <div class="icon">🎧</div>
+        <div class="label">Right AirPod</div>
+        <div class="pct">—</div>
+        <div class="battery-bar"><div class="fill"></div></div>
+      </div>
+      <div class="battery-tile" id="tile-case">
+        <span class="charging-badge">⚡️</span>
+        <div class="icon">🔋</div>
+        <div class="label">Charging Case</div>
+        <div class="pct">—</div>
+        <div class="battery-bar"><div class="fill"></div></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 20px;">
+      <h2>Event log</h2>
+      <div class="log" id="log">Ready.</div>
+    </div>
+
+    <div class="card">
+      <h2>How this works</h2>
+      <p>
+        Apple doesn’t offer a public AirPods API, so this page uses two real techniques plus a fallback:
+      </p>
+      <ul>
+        <li><strong>BLE advertisement scan</strong> — AirPods continuously broadcast Apple’s
+          <em>proximity pairing</em> message (manufacturer ID <code>0x004C</code>, type <code>0x07</code>),
+          which carries left/right/case battery and charging flags in plain bytes. This needs Chrome’s
+          <code>chrome://flags/#enable-experimental-web-platform-features</code> flag for
+          <code>requestLEScan</code>.</li>
+        <li><strong>GATT Battery Service</strong> — the standard Bluetooth battery service. AirPods don’t
+          expose it to non-Apple hosts, but many other earbuds do, so it’s here for completeness.</li>
+        <li><strong>Demo mode</strong> — simulated data so you can explore the UI anywhere.</li>
+      </ul>
+      <p>
+        The case only broadcasts while its lid is open or it’s actively connected — if the case tile stays
+        empty, pop the lid open near your computer.
+      </p>
+    </div>
+  </main>
+
+  <script src="js/battery.js"></script>
+</body>
+</html>

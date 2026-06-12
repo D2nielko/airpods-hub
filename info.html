@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AirPods Hub — Misc Info</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎧</text></svg>" />
+</head>
+<body>
+  <nav>
+    <span class="brand">🎧 AirPods Hub</span>
+    <a href="index.html">Battery</a>
+    <a href="equalizer.html">Equalizer</a>
+    <a href="info.html" class="active">Misc Info</a>
+  </nav>
+
+  <main>
+    <h1>Misc Info</h1>
+    <p class="subtitle">Interesting things from Apple’s documentation and from researchers who reverse-engineered the AirPods protocols.</p>
+
+    <div class="card">
+      <h2>Tech specs at a glance (AirPods Pro 2)</h2>
+      <table class="spec-table">
+        <tr><td>Earbud chip</td><td>Apple H2 headphone chip</td></tr>
+        <tr><td>Case chip</td><td>Apple U1 (ultra-wideband — enables precision Find My)</td></tr>
+        <tr><td>Bluetooth</td><td>5.3</td></tr>
+        <tr><td>Battery (earbuds)</td><td>Up to 6 hours (5.5 h with Spatial Audio + head tracking)</td></tr>
+        <tr><td>Battery (with case)</td><td>Up to 30 hours of listening time</td></tr>
+        <tr><td>Quick charge</td><td>5 minutes in the case ≈ 1 hour of listening</td></tr>
+        <tr><td>Water resistance</td><td>IPX4 (sweat/splash) — earbuds <em>and</em> case</td></tr>
+        <tr><td>Charging</td><td>MagSafe, Apple Watch charger, Qi wireless, or cable</td></tr>
+        <tr><td>Weight</td><td>5.3 g per earbud; the case (50.8 g) weighs more than 9 earbuds</td></tr>
+      </table>
+    </div>
+
+    <div class="fact-grid">
+      <div class="fact">
+        <span class="emoji">📡</span>
+        <h3>Your AirPods are always talking</h3>
+        <p>AirPods continuously broadcast Apple’s “proximity pairing” message over Bluetooth LE —
+        unencrypted bytes carrying model, color, battery levels, charging state, in-ear status, and even
+        a counter of how many times the case lid has been opened. That’s exactly what this app’s battery
+        page listens for.</p>
+      </div>
+
+      <div class="fact">
+        <span class="emoji">🔋</span>
+        <h3>Battery is reported in 10% steps</h3>
+        <p>The BLE broadcast encodes each battery as a 4-bit value from 0–10 (so 7 = 70%), with 15 meaning
+        “not available.” The smooth-looking percentage on your iPhone is built from this same coarse data
+        plus the richer encrypted channel Apple devices get.</p>
+      </div>
+
+      <div class="fact">
+        <span class="emoji">🎚️</span>
+        <h3>Adaptive EQ — the EQ you can’t touch</h3>
+        <p>AirPods Pro tune low and mid frequencies in real time using the inward-facing microphone to
+        measure what’s actually reaching your eardrum. There is no public API to control it — which is why
+        third-party EQ (like this app’s) must shape the audio signal instead of the device.</p>
+      </div>
+
+      <div class="fact">
+        <span class="emoji">🩺</span>
+        <h3>An FDA-authorized hearing aid</h3>
+        <p>With iOS 18, AirPods Pro 2 gained a clinical-grade Hearing Test, Hearing Protection, and an
+        FDA-authorized over-the-counter Hearing Aid feature — the first mainstream earbuds cleared for
+        that use.</p>
+      </div>
+
+      <div class="fact">
+        <span class="emoji">👂</span>
+        <h3>Skin-detect, not light-detect</h3>
+        <p>AirPods Pro 2 replaced the older optical in-ear sensor with a dedicated skin-detect sensor so
+        playback doesn’t pause when you put them in a pocket or on a table — it distinguishes skin from
+        other surfaces.</p>
+      </div>
+
+      <div class="fact">
+        <span class="emoji">🫧</span>
+        <h3>The vent system</h3>
+        <p>Each AirPod Pro has vents that equalize pressure between your inner ear and the outside —
+        that’s why they don’t give you the “plugged” feeling of regular silicone earbuds during ANC.</p>
+      </div>
+
+      <div class="fact">
+        <span class="emoji">📍</span>
+        <h3>The case is a tracking device</h3>
+        <p>The AirPods Pro 2 case carries its own U1 ultra-wideband chip and a built-in speaker, so Find My
+        can guide you to it with direction-and-distance Precision Finding and make it chirp — even when the
+        earbuds aren’t in it.</p>
+      </div>
+
+      <div class="fact">
+        <span class="emoji">🔄</span>
+        <h3>Firmware updates happen silently</h3>
+        <p>There’s no “update” button for AirPods. Firmware installs automatically when they’re in the
+        case, charging, and near a paired Apple device on Wi-Fi. Android users have no official way to
+        trigger or even check for updates.</p>
+      </div>
+
+      <div class="fact">
+        <span class="emoji">🤖</span>
+        <h3>Android gets the basics only</h3>
+        <p>AirPods pair with any Bluetooth device as standard headphones, but battery popups, ear
+        detection, Spatial Audio, and seamless switching are all Apple-only. Projects like LibrePods and
+        OpenPods reverse-engineered the protocols to bring some of it back.</p>
+      </div>
+
+      <div class="fact">
+        <span class="emoji">🎛️</span>
+        <h3>Left and right swap roles</h3>
+        <p>One AirPod is always the “primary” that talks to your phone; the other relays from it. The BLE
+        battery broadcast literally flips which nibble means “left” depending on which pod is primary —
+        a detail every third-party battery reader has to handle (including this one).</p>
+      </div>
+
+      <div class="fact">
+        <span class="emoji">🍏</span>
+        <h3>The irony of this web app</h3>
+        <p>This app runs on Android, macOS, Windows, and Linux via Web Bluetooth in Chrome/Edge — but not
+        on iPhone, because Safari doesn’t implement Web Bluetooth. The one platform where AirPods are
+        first-class is the one platform this app can’t reach them from.</p>
+      </div>
+
+      <div class="fact">
+        <span class="emoji">⚡</span>
+        <h3>Charging-case math</h3>
+        <p>Six hours from the buds plus 24 more from the case = 30 hours total. A 5-minute emergency
+        top-up buys about an hour — roughly one commute per 1% of case battery.</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 20px;">
+      <h2>Sources</h2>
+      <p class="sources">
+        • <a href="https://support.apple.com/en-us/111851" target="_blank" rel="noopener">Apple — AirPods Pro 2 Tech Specs</a><br />
+        • <a href="https://github.com/furiousMAC/continuity/blob/master/messages/proximity_pairing.md" target="_blank" rel="noopener">furiousMAC — Continuity protocol: Proximity Pairing message</a><br />
+        • <a href="https://github.com/kavishdevar/librepods" target="_blank" rel="noopener">LibrePods — AirPods features on non-Apple platforms</a><br />
+        • <a href="https://petsymposium.org/popets/2020/popets-2020-0003.pdf" target="_blank" rel="noopener">PETS 2020 — Personal data leaks in Apple BLE Continuity messages</a>
+      </p>
+    </div>
+  </main>
+</body>
+</html>

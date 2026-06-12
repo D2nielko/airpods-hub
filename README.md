@@ -10,7 +10,6 @@ No build step — it's plain HTML/CSS/JS. Serve the folder over HTTP(S) (Web Blu
 from `file://`):
 
 ```sh
-cd airpods-webapp
 python3 -m http.server 8000
 # open http://localhost:8000
 ```

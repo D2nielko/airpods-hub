@@ -309,7 +309,7 @@ async function startBridge(manual) {
       log(`Bridge not reachable at ${BRIDGE_URL}.`);
       showNotice(
         'The macOS bridge isn’t running. Start it in a terminal with ' +
-        '<code>python3 bridge/macos_bridge.py</code> (from the airpods-webapp folder), then click ' +
+        '<code>python3 bridge/macos_bridge.py</code> (from the repo root), then click ' +
         '“macOS bridge” again.'
       );
     }
